@@ -3,7 +3,7 @@ from DataLoader import DataLoader
 import sys
 
 def parse_user_input() -> dict:
-    DEFAULT_PATH = "data/data.csv"
+    DEFAULT_PATH = "data/test.csv"
     if len(sys.argv) < 2:
         print(f"Default path {DEFAULT_PATH} is used")
         return {"data_path": DEFAULT_PATH}
@@ -19,9 +19,10 @@ def main():
     if data.data is None or data.by_column is None:
         return
     
-    computedData = LinearComputedData(data)
+    computedData = LinearComputedData(data, learning_rate=0.001)
 
-    computedData.generate_model()
+    computedData.generate_model(epochs=1000)
+
 
     print(f"theta0 = {computedData.theta0}, theta1 = {computedData.theta1}")
 
