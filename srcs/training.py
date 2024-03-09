@@ -21,10 +21,10 @@ def main():
     
     computedData = LinearComputedData(data, learning_rate=0.07, theta0=0, theta1=0)
 
-    computedData.generate_model(epochs=5000)
+    computedData.generate_model(epochs=1000)
     print(f"Error before: {computedData.error()}")
 
-    print(f"theta0(b) = {computedData.theta0}, theta1(m) = {computedData.theta1}")
+    print(f"theta0(b) = {computedData.theta0}, theta1(m) = {computedData.theta1}, error = {computedData.error()}")
 
     computedData.save("model.pkl")
 

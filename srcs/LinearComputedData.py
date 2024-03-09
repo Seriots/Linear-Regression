@@ -57,10 +57,15 @@ class LinearComputedData():
 
         self.normalized_data = (self.theta0, self.theta1, x, y)
 
-        print(f"theta0(b) = {self.theta0}, theta1(m) = {self.theta1}")
-        self.theta0 = self.theta0 * (max(self.data.by_column[1]) - min(self.data.by_column[1])) + min(self.data.by_column[1])
-        self.theta1 = self.theta1 * (max(self.data.by_column[1]) - min(self.data.by_column[1])) / (max(self.data.by_column[0]) - min(self.data.by_column[0]))
+        deltax = max(self.data.by_column[0]) - min(self.data.by_column[0])
+        deltay = max(self.data.by_column[1]) - min(self.data.by_column[1])
 
+        tmp0 = self.theta0
+        tmp1 = self.theta1
+
+        self.theta0 = (deltay * tmp0) + min(self.data.by_column[1]) - tmp1 * (deltay / deltax) * min(self.data.by_column[0])
+        self.theta1 = (deltay) * tmp1 / (deltax)
+        
     def display_data(self):
         """Display the data and the model in a plot"""
         fig = plt.figure(figsize=(10, 5))
