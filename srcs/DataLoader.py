@@ -5,7 +5,7 @@ from ArgCheckDecorator import checkCSV
 
 class DataLoader:
     def __init__(self, data_path):
-        self.data = None;
+        self.data = None
         self.by_column = None
         self.load_data(data_path)
 

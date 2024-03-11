@@ -1,5 +1,6 @@
-from ArgsHandler import ArgsHandler, OptionObject, ArgsObject
+from ArgsHandler import ArgsHandler, OptionObject
 import pickle
+
 
 def main():
     args_handler = ArgsHandler('This program perform a linear regression on a dataset', [
@@ -22,7 +23,7 @@ def main():
     mileage = user_input["mileage"] if "mileage" in user_input else None
 
     try:
-        with open (model, 'rb') as file:
+        with open(model, 'rb') as file:
             trainedModel = pickle.load(file)
             
             if mileage is None:
@@ -31,6 +32,7 @@ def main():
             print(trainedModel.predict(mileage))
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == '__main__':
     main()

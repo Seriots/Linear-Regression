@@ -1,6 +1,7 @@
 import sys
 from dataclasses import dataclass, field
 
+
 @dataclass
 class OptionObject:
 	fullname: str
@@ -8,10 +9,12 @@ class OptionObject:
 	name: str = field(default=None)
 	expected_type: str = field(default=bool)
 
+
 @dataclass
 class ArgsObject:
 	name: str
 	description: str = field(default='')
+
 
 class ArgsHandler:
 	"""Argv class parser.
@@ -47,7 +50,7 @@ class ArgsHandler:
 					if last_option.expected_type is bool:
 						input[last_option.fullname] = True
 			else:
-				if last_option == None:
+				if last_option is None:
 					input['args'].append(value)
 				else:
 					if last_option.expected_type == int:
@@ -72,8 +75,8 @@ class ArgsHandler:
 	def full_help(self) -> str:
 		"""Return the full_help message."""
 		usage = f"Usage: python3 {sys.argv[0]} " + " ".join([f"{arg.name}" for arg in self.all_args]) + " [OPTIONS]"
-		options = f"Options:\n" + "\n".join([f"  {f'-{opt.name}, ' if opt.name != None else '   '} --{opt.fullname}  {opt.description}" for opt in self.all_option])
-		args = f"Arguments:\n" + "\n".join([f"  {arg.name}  {arg.description}" for arg in self.all_args])
+		options = "Options:\n" + "\n".join([f"  {f'-{opt.name}, ' if opt.name != None else '   '} --{opt.fullname}  {opt.description}" for opt in self.all_option])
+		args = "Arguments:\n" + "\n".join([f"  {arg.name}  {arg.description}" for arg in self.all_args])
 		return(f"""\
 {usage}
 
@@ -88,7 +91,7 @@ class ArgsHandler:
 	def light_help(self) -> str:
 		"""Return the light_help message."""
 		usage = f"Usage: python3 {sys.argv[0]} " + " ".join([f"{arg.name}" for arg in self.all_args]) + " [OPTIONS]"
-		options = f"Options:\n  " + ", ".join(filter(lambda x: x != '' ,[f"{f'-{opt.name}' if opt.name != None else ''}" for opt in self.all_option]))
+		options = "Options:\n  " + ", ".join(filter(lambda x: x != '', [f"{f'-{opt.name}' if opt.name != None else ''}" for opt in self.all_option]))
 		return(f"""\
 {usage}
 

@@ -1,15 +1,6 @@
 from ArgsHandler import ArgsHandler, OptionObject, ArgsObject
 from LinearRegression import LinearRegression
 from DataLoader import DataLoader
-import sys
-
-def parse_user_input(user_input):
-    DEFAULT_PATH = "data/test.csv"
-    if len(sys.argv) < 2:
-        print(f"Default path {DEFAULT_PATH} is used")
-        return {"data_path": DEFAULT_PATH}
-    print(f"User path {sys.argv[1]} is used")
-    return {"data_path": sys.argv[1]}
 
 
 def main():
