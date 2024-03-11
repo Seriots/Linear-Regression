@@ -13,6 +13,6 @@ class DataLoader:
     def load_data(self, data_path):
         try:
             self.data = pandas.read_csv(data_path)
-            self.by_column = (self.data[self.data.columns[0]], self.data[self.data.columns[1]])
+            self.by_column = {'x': self.data[self.data.columns[0]], 'y': self.data[self.data.columns[1]]}
         except Exception as e:
             print(f"Error: {e}")

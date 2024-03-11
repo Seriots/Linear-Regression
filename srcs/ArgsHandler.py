@@ -30,50 +30,44 @@ class ArgsHandler:
 
 	def parse_args(self) -> dict:
 		"""Read on sys.argv and return a dict with the arguments and options parsed with the expected type. If an error is found, raise a ValueError."""
-		args = {}
+		input = {}
+		input['args'] = []
 		last_option = None
-		args_index = 0
 		for value in sys.argv[1:]:
 			if value.startswith('--'):
 				value = value[2:]
 				if value in [opt.fullname for opt in self.all_option]:
 					last_option = self.all_option[[opt.fullname for opt in self.all_option].index(value)]
 					if last_option.expected_type is bool:
-						args[last_option.fullname] = True
-				else:
-					raise ValueError(f"Unknown option: {value}")
+						input[last_option.fullname] = True
 			elif value.startswith('-'):
 				value = value[1:]
 				if value in [opt.name for opt in self.all_option]:
 					last_option = self.all_option[[opt.name for opt in self.all_option].index(value)]
 					if last_option.expected_type is bool:
-						args[last_option.fullname] = True
-				else:
-					raise ValueError(f"Unknown option: {value}")
+						input[last_option.fullname] = True
 			else:
 				if last_option == None:
-					if args_index < len(self.all_args):
-						args[self.all_args[args_index].name] = value
-						args_index += 1
-					else:
-						raise ValueError(f"Too many arguments.")
+					input['args'].append(value)
 				else:
 					if last_option.expected_type == int:
-						args[last_option.fullname] = int(value)
+						input[last_option.fullname] = int(value)
 					elif last_option.expected_type == float:
-						args[last_option.fullname] = float(value)
+						input[last_option.fullname] = float(value)
 					elif last_option.expected_type == str:
-						args[last_option.fullname] = value
+						input[last_option.fullname] = value
 					elif last_option.expected_type == list:
-						if last_option.fullname not in args:
-							args[last_option.fullname] = []
-						args[last_option.fullname].append(value)
+						if last_option.fullname not in input:
+							input[last_option.fullname] = []
+						input[last_option.fullname].append(value)
 					else:
-						raise ValueError(f"Unknown type: {last_option.expected_type}")
-		if args_index < len(self.all_args):
-			raise ValueError(f"Too few arguments.")				
+						raise ValueError(f"Unknown type: {last_option.expected_type}")		
+		return input
 
-		return args
+	def check_args(self, input: dict) -> None:
+		"""Check if the args are correct. If not, raise a ValueError."""
+		if len(input['args']) != len(self.all_args):
+			raise ValueError(f"Expected {len(self.all_args)} arguments, got {len(input['args'])}.")
 
 	def full_help(self) -> str:
 		"""Return the full_help message."""
