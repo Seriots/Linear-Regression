@@ -38,7 +38,7 @@ class LinearRegression:
         stdx = self.data.by_column['x'].std()
 
         meany = self.data.by_column['y'].mean()
-        stdy = self.data.by_column['y'].std() # ( ) **0.5
+        stdy = self.data.by_column['y'].std()
 
         self.theta0 = (stdy * self.normalized_data['theta0']) + meany - self.normalized_data['theta1'] * (stdy / stdx) * meanx
         self.theta1 = (stdy) * self.normalized_data['theta1'] / (stdx)
@@ -53,6 +53,13 @@ class LinearRegression:
 
     def error(self):
         """Return the cost of the model."""
+        x = self.data.by_column['x']
+        y = self.data.by_column['y']
+        n = len(x)
+        return (1 / 2*n) * sum([(self.predict(x[i]) - y[i]) ** 2 for i in range(n)])
+    
+    def error_norm(self):
+        """Return the cost of the model."""
         x = self.normalized_data['x']
         y = self.normalized_data['y']
         n = len(x)
@@ -65,13 +72,13 @@ class LinearRegression:
         n = len(x)
 
         for _ in range(epochs):
-            D_m = self.learning_rate * (1 / n) * sum([x[i] * (self.predict_norm(x[i]) - y[i]) for i in range(n)])
-            D_c = self.learning_rate * (1 / n) * sum([self.predict_norm(x[i]) - y[i] for i in range(n)])
+            D_t0 = self.learning_rate * (1 / n) * sum([self.predict_norm(x[i]) - y[i] for i in range(n)])
+            D_t1 = self.learning_rate * (1 / n) * sum([x[i] * (self.predict_norm(x[i]) - y[i]) for i in range(n)])
 
-            self.normalized_data['theta0'] -= D_c
-            self.normalized_data['theta1'] -= D_m
+            self.normalized_data['theta0'] -= D_t0
+            self.normalized_data['theta1'] -= D_t1
 
-            self.error_history.append((self.error()))
+            self.error_history.append((self.error_norm()))
 
         self.denormalize()
 
