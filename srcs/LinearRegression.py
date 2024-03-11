@@ -2,7 +2,6 @@ import pickle
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import pandas as pd
 
 from DataLoader import DataLoader
 
@@ -16,32 +15,48 @@ class LinearRegression:
         self.learning_rate = learning_rate
         
         self.normalized_data = self.normalize_data()
+        self.error_history = []
 
     def normalize_data(self):
         """Normalize the data. between 0 and 1"""
         x = self.data.by_column['x']
         y = self.data.by_column['y']
+        meanx = self.data.by_column['x'].mean()
+        stdx = self.data.by_column['x'].std()
 
-        x = (x - min(x)) / (max(x) - min(x))
-        y = (y - min(y)) / (max(y) - min(y))
+        meany = self.data.by_column['y'].mean()
+        stdy = self.data.by_column['y'].std()
+
+        x = (x - meanx) / stdx
+        y = (y - meany) / stdy
        
         return ({'x': x, 'y': y, 'theta0': 0, 'theta1': 0})
+
+    def denormalize(self):
+        """Denormalize the data."""
+        meanx = self.data.by_column['x'].mean()
+        stdx = self.data.by_column['x'].std()
+
+        meany = self.data.by_column['y'].mean()
+        stdy = self.data.by_column['y'].std() # ( ) **0.5
+
+        self.theta0 = (stdy * self.normalized_data['theta0']) + meany - self.normalized_data['theta1'] * (stdy / stdx) * meanx
+        self.theta1 = (stdy) * self.normalized_data['theta1'] / (stdx)
 
     def predict(self, data0):
         """Return the prediction of the model for the given data0."""
         return self.theta0 + self.theta1 * data0
     
     def predict_norm(self, data0):
-        """Return the prediction of the model for the given data0."""
+        """Return the prediction of the model for the given data0 with normalized values."""
         return self.normalized_data['theta0'] + self.normalized_data['theta1'] * data0
 
     def error(self):
         """Return the cost of the model."""
-        x = self.data.by_column['x']
-        y = self.data.by_column['y']
+        x = self.normalized_data['x']
+        y = self.normalized_data['y']
         n = len(x)
-        return (1 / 2*n) * sum([(self.predict(x[i]) - y[i]) ** 2 for i in range(n)])
-
+        return (1 / 2*n) * sum([(self.predict_norm(x[i]) - y[i]) ** 2 for i in range(n)])
 
     def generate_model(self, epochs=1000):
         """Generate the model using the data from the DataLoader.
@@ -56,15 +71,13 @@ class LinearRegression:
             self.normalized_data['theta0'] -= D_c
             self.normalized_data['theta1'] -= D_m
 
-        deltax = max(self.data.by_column['x']) - min(self.data.by_column['x'])
-        deltay = max(self.data.by_column['y']) - min(self.data.by_column['y'])
+            self.error_history.append((self.error()))
 
-        self.theta0 = (deltay * self.normalized_data['theta0']) + min(self.data.by_column['y']) - self.normalized_data['theta1'] * (deltay / deltax) * min(self.data.by_column['x'])
-        self.theta1 = (deltay) * self.normalized_data['theta1'] / (deltax)
-        
+        self.denormalize()
+
     def display_data(self):
         """Display the data and the model in a plot"""
-        fig = plt.figure(figsize=(10, 5))
+        fig = plt.figure(figsize=(8, 4))
         
         fig.add_subplot(1, 2, 1)
 
@@ -72,16 +85,16 @@ class LinearRegression:
         
         x = np.linspace(min(self.data.by_column['x']), max(self.data.by_column['x']))
         sns.lineplot(x=x, y=self.predict(x), color='red', legend='full', label='Prediction')
-        plt.title('Original data')
+        plt.title('Data and prediction')
         plt.legend(loc='upper right')
 
         fig.add_subplot(1, 2, 2)
-        sns.scatterplot(x=self.normalized_data['x'], y=self.normalized_data['y'])
-        
-        x2 = np.linspace(min(self.normalized_data['x']), max(self.normalized_data['x']))
-        sns.lineplot(x=x2, y=self.predict_norm(x2), color='red', legend='full', label='Prediction')
-        plt.title('Normalized data')
+        sns.lineplot(x=range(len(self.error_history)), y=self.error_history, color='red', legend='full', label='Precision')
+        plt.title('Precision')
         plt.legend(loc='upper right')
+        plt.xlabel('Epochs')
+        plt.ylabel('Precision')
+
         try:
             plt.show()
         except KeyboardInterrupt:

@@ -19,6 +19,7 @@ def main():
         OptionObject('help', 'Show this help message.', name='h', expected_type=bool),
         OptionObject('learning_rate', 'Learning rate of the model.', name='l', expected_type=float),
         OptionObject('epochs', 'Number of epochs.', name='e', expected_type=int),
+        OptionObject('output', 'The file to save the algorythm', name='o', expected_type=str),
     ], """""")
 
     try:
@@ -43,15 +44,15 @@ def main():
     
     learning_rate = user_input["learning_rate"] if "learning_rate" in user_input else 0.07
     epochs = user_input["epochs"] if "epochs" in user_input else 1000
+    output = user_input["output"] if "output" in user_input else "model.pkl"
 
-    computedData = LinearRegression(data, learning_rate=learning_rate, theta0=0, theta1=0)
+    computedData = LinearRegression(data, learning_rate=learning_rate)
 
-    print(f"Error before: {computedData.error()}")
     computedData.generate_model(epochs=epochs)
 
     print(f"theta0(b) = {computedData.theta0}, theta1(m) = {computedData.theta1}, error = {computedData.error()}")
 
-    computedData.save("model.pkl")
+    computedData.save(output)
 
     computedData.display_data()
 
