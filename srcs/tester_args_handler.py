@@ -5,11 +5,11 @@ args_handler = ArgsHandler('This program generate some random things for you', [
 	ArgsObject('arg2', 'Second argument.'),
 	ArgsObject('arg3', 'Third argument.'),
 ], [
-	OptionObject('help', 'Show this help message.', 'h'),
-	OptionObject('version', 'Show the version of the program.', 'v'),
-	OptionObject('file', 'File to be processed.', 'f'),
-	OptionObject('debug', 'Run the program in debug mode.', 'd'),
-	OptionObject('yolooaud', 'Run the program in debug mode.'),
+	OptionObject('help', 'Show this help message.', name='h', expected_type=bool),
+	OptionObject('version', 'Show the version of the program.', name='v', expected_type=bool),
+	OptionObject('file', 'File to be processed.', name='f', expected_type=str),
+	OptionObject('yolooaud', 'Run the program in debug mode.', expected_type=int),
+	OptionObject('debug', 'Run the program in debug mode.', name='d', expected_type=list),
 ], """The SIZE argument is an integer and optional unit (example: 10K is 10*1024).
 Units are K,M,G,T,P,E,Z,Y (powers of 1024) or KB,MB,... (powers of 1000).
 
@@ -24,4 +24,10 @@ with --color=never.  With --color=auto, ls emits color codes only when
 standard output is connected to a terminal.  The LS_COLORS environment
 variable can change the settings.  Use the dircolors command to set it.""")
 
-print(args_handler)
+print(args_handler.full_help())
+print()
+print(args_handler.light_help())
+try:
+	print(args_handler.parse_args())
+except Exception as e:
+	print(e)
